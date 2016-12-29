@@ -1,0 +1,17 @@
+@import 'var.scss';
+.header{
+  width: 1000px;
+  height:300px;
+  background-color: $color-primary;
+}
+
+.footer{
+  width: 1000px;
+  height:20px;
+  background-color: $color-sencond;
+}
+
+.header li{
+  color: lighten($color-text-primary,40%);
+
+}

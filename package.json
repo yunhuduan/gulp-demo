@@ -1,0 +1,28 @@
+{
+  "name": "gulpdemo",
+  "version": "1.0.0",
+  "description": "this is a demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "keywords": [
+    "gulp",
+    "demo",
+    "test"
+  ],
+  "author": "duanyunhu",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-ignore": "^2.0.2",
+    "gulp-livereload": "^3.8.1",
+    "gulp-sass": "^3.0.0",
+    "gulp-uglify": "^2.0.0",
+    "pump": "^1.0.2",
+    "run-sequence": "^1.2.2"
+  }
+}
