@@ -1,11 +1,12 @@
 var gulp = require('gulp');
-var concat = require('gulp-concat');
-var sass = require('gulp-sass');
-var uglify = require('gulp-uglify');
-var connect = require('gulp-connect');
-var clean = require('gulp-clean');
-var runSequence = require('run-sequence');
-
+var concat = require('gulp-concat');//合并
+var sass = require('gulp-sass');//sass编译
+var uglify = require('gulp-uglify');//压缩混淆
+var connect = require('gulp-connect');//静态服务器
+var clean = require('gulp-clean');//清理
+var runSequence = require('run-sequence');//执行顺序
+var stripDebug = require('gulp-strip-debug');//Strip console, alert, and debugger statements from JavaScript code with strip-debug
+var livereload = require('gulp-livereload');//实时刷新
 var config = {
     dev:{
 
@@ -22,7 +23,7 @@ gulp.task('clean',function(){
 gulp.task('server',function(){
     connect.server({
         name:'html dev test',
-        root:['dist'],
+        root:['./dist'],
         port:8080,
         livereload:true
     })
@@ -60,19 +61,23 @@ gulp.task('script:watch',function () {
     return gulp.watch('src/js/**/*.js',['script:dev']);
 });
 //=============================================================
-gulp.task('html',function () {
+gulp.task('html:dev',function () {
     return gulp.src('src/**/*.html')
         .pipe(gulp.dest('dist')).pipe(connect.reload());
 });
+gulp.task('html:build',function () {
+    return gulp.src('src/**/*.html')
+        .pipe(gulp.dest('dist'));
+});
 
 gulp.task('html:watch',function () {
-    return gulp.watch('src/**/*.html',['html']);
+    return gulp.watch('src/**/*.html',['html:dev']);
 });
 
 //=============================================================
 
 gulp.task('dev',function(callback){
-    runSequence('clean',['sass:dev','script:dev','html','script:watch','sass:watch','html:watch'],'server',callback);
+    runSequence('clean',['sass:dev','script:dev','html:dev','script:watch','sass:watch','html:watch'],'server',callback);
 });
 
 gulp.task('build',function(callback){
