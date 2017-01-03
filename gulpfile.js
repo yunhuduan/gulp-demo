@@ -7,6 +7,9 @@ var clean = require('gulp-clean');//清理
 var runSequence = require('run-sequence');//执行顺序
 var stripDebug = require('gulp-strip-debug');//Strip console, alert, and debugger statements from JavaScript code with strip-debug
 var livereload = require('gulp-livereload');//实时刷新
+var rename = require('gulp-rename');
+var cleanCSS = require('gulp-clean-css');//gulp plugin to minify CSS,
+var gulpif = require('gulp-if');
 var config = {
     dev:{
 
@@ -37,6 +40,7 @@ gulp.task('sass:dev',function () {
 gulp.task('sass:build',function () {
     return gulp.src('src/sass/*.scss')
         .pipe(sass().on('error',sass.logError))
+        .pipe(cleanCSS())
         .pipe(gulp.dest('./dist/css/'));
 });
 
@@ -52,8 +56,9 @@ gulp.task('script:dev',function () {
 gulp.task('script:build',function () {
     return gulp.src('src/js/**/*.js')
         .pipe(stripDebug())
-        .pipe(concat('all.js'))
         .pipe(uglify())
+        .pipe(concat('all.js'))
+        .pipe(rename({suffix:'.min'}))
         .pipe(gulp.dest('dist/js/'));
 });
 
@@ -81,7 +86,7 @@ gulp.task('dev',function(callback){
 });
 
 gulp.task('build',function(callback){
-    runSequence('clean',['sass:build','script:build','html'],'server',callback);
+    runSequence('clean',['sass:build','script:build','html:build'],callback);
 });
 
 
