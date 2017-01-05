@@ -10,6 +10,9 @@ var livereload = require('gulp-livereload');//实时刷新
 var rename = require('gulp-rename');
 var cleanCSS = require('gulp-clean-css');//gulp plugin to minify CSS,
 var gulpif = require('gulp-if');
+var rev = require('gulp-rev');
+var revCollector = require('gulp-rev-collector');
+
 var config = {
     dev:{
 
@@ -58,7 +61,9 @@ gulp.task('script:build',function () {
         .pipe(stripDebug())
         .pipe(uglify())
         .pipe(concat('all.js'))
+        .pipe(rev())
         .pipe(rename({suffix:'.min'}))
+        .pipe(rev.manifest())
         .pipe(gulp.dest('dist/js/'));
 });
 
@@ -71,7 +76,8 @@ gulp.task('html:dev',function () {
         .pipe(gulp.dest('dist')).pipe(connect.reload());
 });
 gulp.task('html:build',function () {
-    return gulp.src('src/**/*.html')
+    return gulp.src(['dist/js/*.json','src/**/*.html'])
+        .pipe(revCollector())
         .pipe(gulp.dest('dist'));
 });
 
@@ -87,6 +93,9 @@ gulp.task('dev',function(callback){
 
 gulp.task('build',function(callback){
     runSequence('clean',['sass:build','script:build','html:build'],callback);
+});
+gulp.task('buildRev',function(callback){
+    runSequence('clean',['sass:build','script:build'],'html:build',callback);
 });
 
 
