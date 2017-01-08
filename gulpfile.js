@@ -38,13 +38,22 @@ gulp.task('server',function(){
 gulp.task('sass:dev',function () {
     return gulp.src('src/sass/*.scss')
         .pipe(sass().on('error',sass.logError))
-        .pipe(gulp.dest('./dist/css/'));
+        .pipe(concat('all.css'))
+        .pipe(rename({suffix:'.min'}))
+        .pipe(gulp.dest('./dist/css/'))
+        .pipe(connect.reload());
 });
 gulp.task('sass:build',function () {
     return gulp.src('src/sass/*.scss')
         .pipe(sass().on('error',sass.logError))
+        .pipe(concat('all.css'))
         .pipe(cleanCSS())
-        .pipe(gulp.dest('./dist/css/'));
+        .pipe(rename({suffix:'.min'}))
+        .pipe(rev())
+        .pipe(gulp.dest('./dist/css/'))
+        .pipe(rev.manifest('rev-css-manifest.json'))
+        .pipe(gulp.dest('./dist/rev'));
+
 });
 
 gulp.task('sass:watch',function () {
@@ -53,7 +62,10 @@ gulp.task('sass:watch',function () {
 //=============================================================
 gulp.task('script:dev',function () {
     return gulp.src('src/js/**/*.js')
-        .pipe(gulp.dest('dist/js/'));
+        .pipe(concat('all.js'))
+        .pipe(rename({suffix:'.min'}))
+        .pipe(gulp.dest('dist/js/'))
+        .pipe(connect.reload());
 });
 
 gulp.task('script:build',function () {
@@ -61,10 +73,11 @@ gulp.task('script:build',function () {
         .pipe(stripDebug())
         .pipe(uglify())
         .pipe(concat('all.js'))
-        .pipe(rev())
         .pipe(rename({suffix:'.min'}))
-        .pipe(rev.manifest())
-        .pipe(gulp.dest('dist/js/'));
+        .pipe(rev())
+        .pipe(gulp.dest('dist/js/'))
+        .pipe(rev.manifest('rev-js-manifest.json'))
+        .pipe(gulp.dest('dist/rev'));
 });
 
 gulp.task('script:watch',function () {
@@ -76,7 +89,7 @@ gulp.task('html:dev',function () {
         .pipe(gulp.dest('dist')).pipe(connect.reload());
 });
 gulp.task('html:build',function () {
-    return gulp.src(['dist/js/*.json','src/**/*.html'])
+    return gulp.src(['dist/rev/*.json','src/**/*.html'])
         .pipe(revCollector())
         .pipe(gulp.dest('dist'));
 });
@@ -94,8 +107,3 @@ gulp.task('dev',function(callback){
 gulp.task('build',function(callback){
     runSequence('clean',['sass:build','script:build','html:build'],callback);
 });
-gulp.task('buildRev',function(callback){
-    runSequence('clean',['sass:build','script:build'],'html:build',callback);
-});
-
-
